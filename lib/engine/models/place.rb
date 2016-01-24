@@ -1,0 +1,73 @@
+class Place < ActiveRecord::Base
+  @@cache = {}
+  has_many :patterns, class_name:'PlacePattern'
+  validates :name, :city, :latitude, :longitude, presence: true
+  validates :name, uniqueness: {scope: :city}
+  before_validation :geocache
+  before_create :default_patterns
+  geocoded_by :long_name
+  reverse_geocoded_by :latitude, :longitude, address: :name
+  scope :like, -> n { where id:select{|x| x =~ n }.collect(&:id) }
+  scope :match, -> args {
+    # Places in a city
+    places = Place.where city:args[:city]
+    # Find Place like or near
+    lname = "#{args[:name]} #{args[:city]}".strip
+    dist  = args[:dist] || 0.025
+    place = (places.like(args[:name]) || places.near(lname, dist, order:'distance')).first
+    # Create an Unknown place otherwise
+    place ||= Unknown.create(
+      city:      args[:city],
+      name:      args[:name],
+      latitude:  args[:latitude],
+      longitude: args[:latitude],
+      source:    args[:source])
+  }
+
+  def =~ name
+    patterns.map{|x| x.exp =~ name }.compact.min
+  end
+
+  def default_patterns
+    [ patterns.new(value:"(?i-mx:#{name})") ]
+  end
+
+  def geocache
+    @@cache[long_name] ||= geocode
+  end
+
+  def long_name
+    @long_name ||= "#{name} #{city}"
+  end
+
+  def to_h
+    { city:         city,
+      place:        name,
+      neighborhood: neighborhood,
+      latitude:     latitude,
+      longitude:    longitude,
+      source:       source }
+  end
+end
+
+class Intersection < Place
+  def default_patterns
+    super + [ patterns.new(value:"(?i-mx:#{self.main} .*? #{self.cross})"),
+              patterns.new(value:"(?i-mx:#{self.cross} .*? #{self.main})") ]
+  end
+end
+
+class Address < Place
+  def default_patterns
+    super + [ patterns.new(value:"(?i-mx:#{number} .*?#{street})") ]
+  end
+end
+
+class Landmark < Place
+end
+
+class Event < Place
+end
+
+class Unknown < Place
+end
