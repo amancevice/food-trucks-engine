@@ -52,8 +52,10 @@ module Engine
   end
 
   class Server < Sinatra::Base
-    get '/' do
-      content_type :json
+
+    private
+
+    def handle_get params
       params.symbolize_keys!
       klass  = params[:class]&.constantize
       source = klass&.new(
@@ -63,13 +65,10 @@ module Engine
       process(source&.response||[]).to_json
     end
 
-    post '/' do
-      content_type :json
+    def handle_post params
       params.symbolize_keys!
       process(JSON.parse(params[:payload]||[])).to_json
     end
-
-    private
 
     def process payload
       payload.map do |args|
@@ -94,22 +93,24 @@ module Engine
   end
 
   class Client
-    attr_reader = :host
+    attr_reader = :host, :port
 
     def initialize args
-      @host = URI.parse args[:host]
+      @host = args[:host]
+      @port = args[:port]
+      @path = args[:path]||''
     end
 
     def get args
       params  = args.map{|k,v| "#{k}=#{CGI::escape v.to_s}"}.join '&'
-      http    = Net::HTTP.new @host.host, @host.port
-      request = Net::HTTP::Get.new "#{@host.request_uri}/?#{params}"
+      http    = Net::HTTP.new @host, @port
+      request = Net::HTTP::Get.new "#{@path}/?#{params}"
       JSON.parse http.request(request).body
     end
 
     def post payload
-      http    = Net::HTTP.new @host.host, @host.port
-      request = Net::HTTP::Post.new @host.request_uri
+      http    = Net::HTTP.new @host, @port
+      request = Net::HTTP::Post.new @path
       request.set_form_data payload:payload.to_json
       JSON.parse http.request(request).body
     end
