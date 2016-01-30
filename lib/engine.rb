@@ -120,4 +120,25 @@ module Engine
       JSON.parse response.body
     end
   end
+
+  def self.process payload=nil
+    payload.map do |args|
+      args.symbolize_keys!
+      place = Place.match(
+        city:      args[:city],
+        name:      args[:place],
+        latitude:  args[:latitude],
+        longitude: args[:longitude],
+        source:    args[:source],
+        dist:      args[:dist])
+      truck = Truck.match(
+        city:   args[:city],
+        name:   args[:truck],
+        site:   args[:site],
+        source: args[:source])
+      args.merge(truck.to_h)
+          .merge(place.to_h)
+          .merge(source:args[:source])
+    end
+  end
 end
