@@ -18,6 +18,6 @@ class Truck < ActiveRecord::Base
   end
 
   def to_h
-    { truck:name, site:site, source:source }
+    { truck:name, site:site, source:source }.reject{|k,v| v.nil? }
   end
 end

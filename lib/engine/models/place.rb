@@ -47,7 +47,7 @@ class Place < ActiveRecord::Base
       latitude:     latitude,
       longitude:    longitude,
       source:       source,
-      type:         type }
+      type:         type }.reject{|k,v| v.nil? }
   end
 end
 
