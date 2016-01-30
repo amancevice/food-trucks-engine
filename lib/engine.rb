@@ -95,23 +95,29 @@ module Engine
     attr_reader = :host, :port
 
     def initialize args
-      @host = args[:host]
-      @port = args[:port]
-      @path = args[:path]
+      @host    = args[:host]
+      @port    = args[:port]
+      @path    = args[:path]
+      @timeout = args[:read_timeout]||500
     end
 
     def get args=nil
-      params  = args&.map{|k,v| "#{k}=#{CGI::escape v.to_s}"}&.join '&'
-      http    = Net::HTTP.new @host, @port
-      request = Net::HTTP::Get.new "#{@path}/?#{params}"
-      JSON.parse http.request(request).body
+      params   = args&.map{|k,v| "#{k}=#{CGI::escape v.to_s}"}&.join '&'
+      request  = Net::HTTP::Get.new "#{@path}/?#{params}"
+      response = Net::HTTP.start(@host, @port, read_timeout:@timeout) do |http|
+         http.request request
+      end
+      JSON.parse response.body
     end
 
     def post payload
       http    = Net::HTTP.new @host, @port
       request = Net::HTTP::Post.new @path
       request.set_form_data payload:payload.to_json
-      JSON.parse http.request(request).body
+      response = Net::HTTP.start(@host, @port, read_timeout:@timeout) do |http|
+         http.request request
+      end
+      JSON.parse response.body
     end
   end
 end
