@@ -16,7 +16,6 @@ require "engine/meal"
 require "engine/models/pattern"
 require "engine/models/place"
 require "engine/models/truck"
-require "engine/weekday"
 
 module Engine
   class Migration < ActiveRecord::Migration
