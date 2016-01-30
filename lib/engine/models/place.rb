@@ -16,7 +16,7 @@ class Place < ActiveRecord::Base
     dist  = args[:dist] || 0.025
     place = (places.like(args[:name]) || places.near(lname, dist, order:'distance')).first
     # Create an Unknown place otherwise
-    place ||= Unknown.new(
+    place ||= Unknown.create(
       city:      args[:city],
       name:      args[:name],
       latitude:  args[:latitude],
