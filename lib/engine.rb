@@ -98,11 +98,11 @@ module Engine
     def initialize args
       @host = args[:host]
       @port = args[:port]
-      @path = args[:path]||''
+      @path = args[:path]
     end
 
-    def get args
-      params  = args.map{|k,v| "#{k}=#{CGI::escape v.to_s}"}.join '&'
+    def get args=nil
+      params  = args&.map{|k,v| "#{k}=#{CGI::escape v.to_s}"}&.join '&'
       http    = Net::HTTP.new @host, @port
       request = Net::HTTP::Get.new "#{@path}/?#{params}"
       JSON.parse http.request(request).body
