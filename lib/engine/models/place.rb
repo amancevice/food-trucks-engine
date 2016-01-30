@@ -33,7 +33,7 @@ class Place < ActiveRecord::Base
   end
 
   def geocache
-    @@cache[long_name] ||= geocode
+    @@cache[long_name] ||= (latitude.nil?||longitude.nil?) ? geocode : [latitude, longitude]
   end
 
   def long_name
