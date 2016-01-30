@@ -61,33 +61,12 @@ module Engine
         endpoint: params[:endpoint],
         city:     params[:city],
         timezone: params[:timezone])
-      process(source&.response||[]).to_json
+      Engine.process(source&.response||[]).to_json
     end
 
     def handle_post params
       params.symbolize_keys!
-      process(JSON.parse(params[:payload]||[])).to_json
-    end
-
-    def process payload
-      payload.map do |args|
-        args.symbolize_keys!
-        place = Place.match(
-          city:      args[:city],
-          name:      args[:place],
-          latitude:  args[:latitude],
-          longitude: args[:longitude],
-          source:    args[:source],
-          dist:      args[:dist])
-        truck = Truck.match(
-          city:   args[:city],
-          name:   args[:truck],
-          site:   args[:site],
-          source: args[:source])
-        args.merge(truck.to_h)
-            .merge(place.to_h)
-            .merge(source:args[:source])
-      end
+      Engine.process(JSON.parse(params[:payload]||[])).to_json
     end
   end
 
@@ -121,24 +100,48 @@ module Engine
     end
   end
 
-  def self.process payload=nil
-    payload.map do |args|
-      args.symbolize_keys!
-      place = Place.match(
+  class << self
+    def process payload
+      payload.map do |args|
+        args.symbolize_keys!
+        place = Engine.place args
+        truck = Engine.truck args
+        args.merge(truck.to_h)
+          .merge(place.to_h)
+          .merge(source:args[:source])
+      end
+    end
+
+    def process! payload
+      payload.map do |args|
+        args.symbolize_keys!
+        place = Engine.place args
+        truck = Engine.truck args
+        place.save
+        truck.save
+        args.merge(truck.to_h)
+          .merge(place.to_h)
+          .merge(source:args[:source])
+      end
+    end
+
+
+    def place args
+      Place.match(
         city:      args[:city],
         name:      args[:place],
         latitude:  args[:latitude],
         longitude: args[:longitude],
         source:    args[:source],
         dist:      args[:dist])
-      truck = Truck.match(
+    end
+
+    def truck args
+      Truck.match(
         city:   args[:city],
         name:   args[:truck],
         site:   args[:site],
         source: args[:source])
-      args.merge(truck.to_h)
-          .merge(place.to_h)
-          .merge(source:args[:source])
     end
   end
 end
