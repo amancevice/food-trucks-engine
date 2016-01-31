@@ -29,7 +29,7 @@ class Place < ActiveRecord::Base
   end
 
   def default_patterns
-    [ patterns.new(value:"(?i-mx:#{name})") ]
+    [ patterns.new(value:"(?i-mx:#{Regexp.escape name})") ]
   end
 
   def geocache
@@ -53,14 +53,14 @@ end
 
 class Intersection < Place
   def default_patterns
-    super + [ patterns.new(value:"(?i-mx:#{self.main} .*? #{self.cross})"),
-              patterns.new(value:"(?i-mx:#{self.cross} .*? #{self.main})") ]
+    super + [ patterns.new(value:"(?i-mx:#{Regexp.escape self.main} .*? #{Regexp.escape self.cross})"),
+              patterns.new(value:"(?i-mx:#{Regexp.escape self.cross} .*? #{Regexp.escape self.main})") ]
   end
 end
 
 class Address < Place
   def default_patterns
-    super + [ patterns.new(value:"(?i-mx:#{number} .*?#{street})") ]
+    super + [ patterns.new(value:"(?i-mx:#{Regexp.escape number} .*?#{Regexp.escape street})") ]
   end
 end
 

@@ -108,7 +108,7 @@ module Engine
   end
 
   class << self
-    def process payload
+    def process payload, save=false
       payload.map do |args|
         args.symbolize_keys!
         place = Place.match(
@@ -123,16 +123,16 @@ module Engine
           name:   args[:truck],
           site:   args[:site],
           source: args[:source])
+        if save
+          place.save!
+          truck.save!
+        end
         [ args, place, truck ]
       end
     end
 
     def process! payload
-      process(payload).map do |args, place, truck|
-        place.save!
-        truck.save!
-        [ args, place, truck ]
-      end
+      process payload, save=true
     end
   end
 end
