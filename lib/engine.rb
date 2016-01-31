@@ -54,7 +54,7 @@ module Engine
     end
 
     def process args=nil
-      post get(args)
+      post get(args)[:response]
     end
 
     def get args=nil
@@ -63,7 +63,7 @@ module Engine
       response = Net::HTTP.start(@host, @port, read_timeout:@timeout) do |http|
         http.request request
       end
-      JSON.parse response.body
+      JSON.parse(response.body).symbolize_keys
     end
 
     def post payload
@@ -73,7 +73,7 @@ module Engine
       response = Net::HTTP.start(@host, @port, read_timeout:@timeout) do |http|
         http.request request
       end
-      JSON.parse response.body
+      JSON.parse(response.body).symbolize_keys
     end
   end
 
