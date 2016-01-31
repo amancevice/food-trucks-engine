@@ -53,6 +53,10 @@ module Engine
       @timeout = args[:read_timeout]||500
     end
 
+    def process args=nil
+      post get(args)
+    end
+
     def get args=nil
       params   = args&.map{|k,v| "#{k}=#{CGI::escape v.to_s}"}&.join '&'
       request  = Net::HTTP::Get.new "#{@path}/?#{params}"
