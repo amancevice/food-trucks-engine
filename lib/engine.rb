@@ -54,7 +54,7 @@ module Engine
     end
 
     def process args=nil
-      post get(args)[:response]
+      post get(args)[:response].collect(&:symbolize_keys)
     end
 
     def get args=nil
