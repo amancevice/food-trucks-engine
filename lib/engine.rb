@@ -44,12 +44,10 @@ module Engine
   end
 
   class Client
-    attr_reader = :host, :path, :port, :timeout
-
     def initialize args
       @host    = args[:host]
       @port    = args[:port]
-      @path    = args[:path]
+      @path    = args[:path]||'/'
       @timeout = args[:read_timeout]||500
     end
 
@@ -59,7 +57,7 @@ module Engine
 
     def get args=nil
       params   = args&.map{|k,v| "#{k}=#{CGI::escape v.to_s}"}&.join '&'
-      request  = Net::HTTP::Get.new "#{@path}/?#{params}"
+      request  = Net::HTTP::Get.new "#{@path}?#{params}"
       response = Net::HTTP.start(@host, @port, read_timeout:@timeout) do |http|
         http.request request
       end
