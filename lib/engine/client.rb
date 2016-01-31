@@ -8,8 +8,9 @@ module Engine
     end
 
     def query path:nil, read_timeout:nil, **params
-      payload = get path:path, read_timeout:read_timeout, **params
-      post path:path, read_timeout:read_timeout, payload:payload
+      payload  = get path:path, read_timeout:read_timeout, **params
+      response = post path:path, read_timeout:read_timeout, payload:payload
+      response[:response]&.collect &:symbolize_keys
     end
 
     def get path:nil, read_timeout:nil, **params

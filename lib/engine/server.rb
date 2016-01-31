@@ -17,9 +17,11 @@ module Engine
       params.symbolize_keys!
       payload = JSON.parse params[:payload]
       Engine.process(payload).map do |args, place, truck|
-        args.merge(truck.to_h)
+        item = args.merge(truck.to_h)
           .merge(place.to_h)
           .merge(source:args[:source])
+        item[:sha1] = Digest::SHA1.hexdigest item.to_s
+        item
       end
     end
   end
