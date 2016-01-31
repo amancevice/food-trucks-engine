@@ -32,9 +32,9 @@ module Engine
       source&.response
     end
 
-    def handle_post payload
+    def handle_post params
       params.symbolize_keys!
-      payload = JSON.parse payload
+      payload = JSON.parse params[:payload]
       Engine.process(payload).map do |args, place, truck|
         args.merge(truck.to_h)
           .merge(place.to_h)
