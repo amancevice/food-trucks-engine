@@ -14,7 +14,7 @@ class Truck < ActiveRecord::Base
   end
 
   def default_patterns
-    [patterns.new(value:"(?i-mx:#{name})")]
+    [ patterns.new(value:"(?i-mx:#{name})") ]
   end
 
   def to_h
