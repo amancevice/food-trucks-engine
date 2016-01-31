@@ -10,129 +10,41 @@ require "sinatra/activerecord"
 
 Geocoder::Railtie.insert
 
-require "engine/version"
-require "engine/providers"
+require "engine/client"
 require "engine/meal"
-require "engine/models/pattern"
-require "engine/models/place"
-require "engine/models/truck"
+require "engine/migration"
+require "engine/pattern"
+require "engine/place"
+require "engine/provider"
+require "engine/server"
+require "engine/truck"
+require "engine/version"
 
 module Engine
-  class Server < Sinatra::Base
-
-    private
-
-    def handle_get params
-      params.symbolize_keys!
-      klass  = params[:class]&.constantize
-      source = klass&.new(
-        endpoint: params[:endpoint],
-        city:     params[:city],
-        timezone: params[:timezone])
-      source&.response
-    end
-
-    def handle_post params
-      params.symbolize_keys!
-      payload = JSON.parse params[:payload]
-      Engine.process(payload).map do |args, place, truck|
-        args.merge(truck.to_h)
-          .merge(place.to_h)
-          .merge(source:args[:source])
+  def self.process payload, send:nil
+    payload.map do |args|
+      args.symbolize_keys!
+      place = Place.match(
+        city:      args[:city],
+        name:      args[:place],
+        latitude:  args[:latitude],
+        longitude: args[:longitude],
+        source:    args[:source],
+        dist:      args[:dist])
+      truck = Truck.match(
+        city:   args[:city],
+        name:   args[:truck],
+        site:   args[:site],
+        source: args[:source])
+      if send
+        place.send send
+        truck.send send
       end
+      [ args, place, truck ]
     end
   end
 
-  class Client
-    def initialize args
-      @host    = args[:host]
-      @port    = args[:port]
-      @path    = args[:path]||'/'
-      @timeout = args[:read_timeout]||500
-    end
-
-    def process args=nil
-      post get(args)[:response].collect(&:symbolize_keys)
-    end
-
-    def get args=nil
-      params   = args&.map{|k,v| "#{k}=#{CGI::escape v.to_s}"}&.join '&'
-      request  = Net::HTTP::Get.new "#{@path}?#{params}"
-      response = Net::HTTP.start(@host, @port, read_timeout:@timeout) do |http|
-        http.request request
-      end
-      JSON.parse(response.body).symbolize_keys
-    end
-
-    def post payload
-      http    = Net::HTTP.new @host, @port
-      request = Net::HTTP::Post.new @path
-      request.set_form_data payload:payload.to_json
-      response = Net::HTTP.start(@host, @port, read_timeout:@timeout) do |http|
-        http.request request
-      end
-      JSON.parse(response.body).symbolize_keys
-    end
-  end
-
-  class Migration < ActiveRecord::Migration
-    def change
-      create_table :places do |t|
-        t.float  :latitude
-        t.float  :longitude
-        t.string :city
-        t.string :cross
-        t.string :main
-        t.string :name
-        t.string :neighborhood
-        t.string :number
-        t.string :source
-        t.string :street
-        t.string :type
-      end
-
-      create_table :trucks do |t|
-        t.string :city
-        t.string :name
-        t.string :site
-        t.string :source
-      end
-
-      create_table :patterns do |t|
-        t.belongs_to :place
-        t.belongs_to :truck
-        t.string     :type
-        t.string     :value
-      end
-    end
-  end
-
-  class << self
-    def process payload, save=false
-      payload.map do |args|
-        args.symbolize_keys!
-        place = Place.match(
-          city:      args[:city],
-          name:      args[:place],
-          latitude:  args[:latitude],
-          longitude: args[:longitude],
-          source:    args[:source],
-          dist:      args[:dist])
-        truck = Truck.match(
-          city:   args[:city],
-          name:   args[:truck],
-          site:   args[:site],
-          source: args[:source])
-        if save
-          place.save!
-          truck.save!
-        end
-        [ args, place, truck ]
-      end
-    end
-
-    def process! payload
-      process payload, save=true
-    end
+  def self.process! payload
+    process payload, send: :save!
   end
 end

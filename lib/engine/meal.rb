@@ -1,8 +1,8 @@
 module Meal
-  BREAKFAST  = 'Breakfast'
-  LUNCH      = 'Lunch'
-  DINNER     = 'Dinner'
-  LATE_NIGHT = 'Late Night'
+  BREAKFAST  = "Breakfast"
+  LUNCH      = "Lunch"
+  DINNER     = "Dinner"
+  LATE_NIGHT = "Late Night"
 
   def self.between args
     start = Time.parse args[:start]
