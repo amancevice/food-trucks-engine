@@ -17,12 +17,15 @@ module Engine
       params.symbolize_keys!
       payload = JSON.parse params[:payload]
       Engine.process(payload).map do |args, place, truck|
-        item = args.merge(truck.to_h)
-          .merge(place.to_h)
-          .merge(source:args[:source])
-        item[:sha1] = Digest::SHA1.hexdigest item.to_s
-        item
-      end
+        day = Time.parse(args[:start]).strftime '%A'
+        Meal.between(start:args[:start], stop:args[:stop]).map do |meal|
+          item = args.merge(truck.to_h)
+            .merge(place.to_h)
+            .merge(source:args[:source], day:day, meal:meal)
+          item[:sha1] = Digest::SHA1.hexdigest item.to_s
+          item
+        end
+      end.flatten
     end
   end
 end
