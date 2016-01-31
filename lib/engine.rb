@@ -118,7 +118,7 @@ module Engine
           longitude: args[:longitude],
           source:    args[:source],
           dist:      args[:dist])
-        trucks = Truck.match(
+        truck = Truck.match(
           city:   args[:city],
           name:   args[:truck],
           site:   args[:site],
