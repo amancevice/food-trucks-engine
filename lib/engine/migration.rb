@@ -15,6 +15,8 @@ module Engine
         t.string :type
       end
 
+      add_index :places, [:latitude, :longitude]
+
       create_table :trucks do |t|
         t.string :city
         t.string :name

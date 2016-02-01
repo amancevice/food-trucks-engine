@@ -11,22 +11,18 @@ class Place < ActiveRecord::Base
   scope :like, -> n { where id:select{|x| x =~ n }.collect(&:id) }
   scope :nearby, -> lat,lon { where id:select{|x| x.nearby? lat, lon }.collect(&:id) }
   scope :match, -> args {
-    # Places in a city
     places = args[:city].nil? ? Place.all : Place.where(city:args[:city])
-    # Find Place like or near
-    lname = "#{args[:name]} #{args[:city]}".strip
-    dist  = args[:dist]||0.025
-    place = places.like(args[:name]).first ||
-      places.nearby(args[:latitude], args[:longitude]).first ||
-      places.near(lname, dist, order:"distance").first ||
-
-    # Create an Unknown place otherwise
-    place ||= Unknown.new(
-      city:      args[:city],
-      name:      args[:name],
-      latitude:  args[:latitude],
-      longitude: args[:latitude],
-      source:    args[:source])
+    place  = places.like(args[:name]).first ||
+      places.nearby(args[:latitude], args[:longitude], max:args[:dist]||0.05).first ||
+      places.near("#{args[:name]} #{args[:city]}".strip, args[:dist]||0.05, units: :km).first ||
+      Unknown.new(
+        city:      args[:city],
+        name:      args[:name],
+        latitude:  args[:latitude],
+        longitude: args[:latitude],
+        source:    args[:source])
+      puts args, place
+      place
   }
 
   def geocache
