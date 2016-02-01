@@ -1,6 +1,7 @@
 class Place < ActiveRecord::Base
+  include Like
   @@cache = {}
-  has_many :patterns, class_name:'PlacePattern'
+  has_many :patterns, class_name:"PlacePattern"
   validates :name, :city, :latitude, :longitude, presence: true
   validates :name, uniqueness: {scope: :city}
   before_validation :geocache
@@ -23,14 +24,6 @@ class Place < ActiveRecord::Base
       longitude: args[:latitude],
       source:    args[:source])
   }
-
-  def =~ name
-    patterns.map{|x| x.exp =~ name }.compact.min
-  end
-
-  def default_patterns
-    [ patterns.new(value:"(?i-mx:#{Regexp.escape name})") ]
-  end
 
   def geocache
     @@cache[long_name] ||= (latitude.nil?||longitude.nil?) ? geocode : [latitude, longitude]

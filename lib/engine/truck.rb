@@ -1,5 +1,6 @@
 class Truck < ActiveRecord::Base
-  has_many :patterns, class_name:'TruckPattern'
+  include Like
+  has_many :patterns, class_name:"TruckPattern"
   validates :name, :city, presence: true
   validates :name, uniqueness: {scope: :city}
   after_validation :default_patterns
@@ -8,14 +9,6 @@ class Truck < ActiveRecord::Base
     truck   = Truck.where(city:args[:city]).like(args[:name]).first
     truck ||= Truck.new city:args[:city], name:args[:name], source:args[:source]
   }
-
-  def =~ name
-    patterns.map{|x| x.exp =~ name }.compact.min
-  end
-
-  def default_patterns
-    [ patterns.new(value:"(?i-mx:#{Regexp.escape name})") ]
-  end
 
   def to_h
     { truck:name, site:site, source:source }.reject{|k,v| v.nil? }

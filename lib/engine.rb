@@ -11,6 +11,7 @@ require "sinatra/activerecord"
 Geocoder::Railtie.insert
 
 require "engine/client"
+require "engine/like"
 require "engine/meal"
 require "engine/migration"
 require "engine/pattern"
@@ -40,8 +41,15 @@ module Engine
         place.send send
         truck.send send
       end
-      [ args, place, truck ]
-    end
+      day = Time.parse(args[:start]).strftime '%A'
+      Meal.between(start:args[:start], stop:args[:stop]).map do |meal|
+        item = args.merge(truck.to_h)
+          .merge(place.to_h)
+          .merge(source:args[:source], day:day, meal:meal)
+        item[:sha1] = Digest::SHA1.hexdigest item.to_s
+        item
+      end
+    end.flatten
   end
 
   def self.process! payload

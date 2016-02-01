@@ -1,6 +1,6 @@
 class Pattern < ActiveRecord::Base
-  def exp
-    Regexp.new value
+  def =~ name
+    Regexp.new(value) =~ name
   end
 end
 
