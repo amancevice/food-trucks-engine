@@ -11,10 +11,10 @@ class Place < ActiveRecord::Base
   scope :like, -> n { where id:select{|x| x =~ n }.collect(&:id) }
   scope :match, -> args {
     # Places in a city
-    places = Place.where city:args[:city]
+    places = args[:city].nil? ? Place.all : Place.where(city:args[:city])
     # Find Place like or near
     lname = "#{args[:name]} #{args[:city]}".strip
-    dist  = args[:dist] || 0.025
+    dist  = args[:dist]||0.025
     place = (places.like(args[:name]) || places.near(lname, dist, order:'distance')).first
     # Create an Unknown place otherwise
     place ||= Unknown.new(
