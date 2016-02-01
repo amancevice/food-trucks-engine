@@ -1,5 +1,5 @@
 class Place < ActiveRecord::Base
-  include Like
+  include Like, Locatable
   @@cache = {}
   has_many :patterns, class_name:"PlacePattern"
   validates :name, :city, :latitude, :longitude, presence: true
@@ -9,13 +9,17 @@ class Place < ActiveRecord::Base
   geocoded_by :long_name
   reverse_geocoded_by :latitude, :longitude, address: :name
   scope :like, -> n { where id:select{|x| x =~ n }.collect(&:id) }
+  scope :nearby, -> lat,lon { where id:select{|x| x.nearby? lat, lon }.collect(&:id) }
   scope :match, -> args {
     # Places in a city
     places = args[:city].nil? ? Place.all : Place.where(city:args[:city])
     # Find Place like or near
     lname = "#{args[:name]} #{args[:city]}".strip
     dist  = args[:dist]||0.025
-    place = (places.like(args[:name]) || places.near(lname, dist, order:'distance')).first
+    place = places.like(args[:name]).first ||
+      places.nearby(args[:latitude], args[:longitude]).first ||
+      places.near(lname, dist, order:"distance").first ||
+
     # Create an Unknown place otherwise
     place ||= Unknown.new(
       city:      args[:city],

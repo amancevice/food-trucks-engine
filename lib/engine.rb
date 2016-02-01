@@ -12,6 +12,7 @@ Geocoder::Railtie.insert
 
 require "engine/client"
 require "engine/like"
+require "engine/locatable"
 require "engine/meal"
 require "engine/migration"
 require "engine/pattern"
