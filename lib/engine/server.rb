@@ -1,5 +1,16 @@
 module Engine
   class Server < Sinatra::Base
+    get '/' do
+      content_type :json
+      params[:response] = handle_get params
+      params.to_json
+    end
+
+    post '/' do
+      content_type :json
+      response = handle_post params
+      { response:response }.to_json
+    end
 
     private
 
