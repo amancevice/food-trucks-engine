@@ -9,11 +9,11 @@ class Place < ActiveRecord::Base
   geocoded_by :long_name
   reverse_geocoded_by :latitude, :longitude, address: :name
   scope :like, -> n { where id:select{|x| x =~ n }.collect(&:id) }
-  scope :nearby, -> lat,lon { where id:select{|x| x.nearby? lat, lon }.collect(&:id) }
+  scope :nearby, -> args { where id:select{|x| x.nearby? args }.collect(&:id) }
   scope :match, -> args {
     places = args[:city].nil? ? Place.all : Place.where(city:args[:city])
-    place  = places.like(args[:name]).first ||
-      places.nearby(args[:latitude], args[:longitude], max:args[:dist]||0.05).first ||
+    places.like(args[:name]).first ||
+      places.nearby(lat:args[:latitude], lng:args[:longitude], max:args[:dist]||0.05).first ||
       places.near("#{args[:name]} #{args[:city]}".strip, args[:dist]||0.05, units: :km).first ||
       Unknown.new(
         city:      args[:city],
@@ -21,8 +21,6 @@ class Place < ActiveRecord::Base
         latitude:  args[:latitude],
         longitude: args[:latitude],
         source:    args[:source])
-      puts args, place
-      place
   }
 
   def geocache
