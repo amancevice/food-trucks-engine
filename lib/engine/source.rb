@@ -1,4 +1,4 @@
-class Provider
+class Source
   def initialize args
     @city     = args[:city]
     @endpoint = URI.parse args[:endpoint]
@@ -10,19 +10,19 @@ class Provider
   end
 end
 
-class JSONProvider < Provider
+class JSONSource < Source
   def response
     JSON.parse super
   end
 end
 
-class HTMLProvider < Provider
+class HTMLSource < Source
   def response
     Oga.parse_html super
   end
 end
 
-class StreetFood < JSONProvider
+class StreetFood < JSONSource
   def response
     super['vendors'].map do |key, row|
       row['open'].map do |opening|
@@ -44,7 +44,7 @@ class StreetFood < JSONProvider
   end
 end
 
-class CityOfBoston < HTMLProvider
+class CityOfBoston < HTMLSource
   def response
     super.xpath("//tr[@class='trFoodTrucks']").map do |row|
       a_node     = row.xpath(".//td[@class='com']/a").first
