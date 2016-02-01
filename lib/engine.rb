@@ -46,7 +46,7 @@ module Engine
       Meal.between(start:args[:start], stop:args[:stop]).map do |meal|
         item = args.merge(truck.to_h)
           .merge(place.to_h)
-          .merge(source:args[:source], day:day, meal:meal)
+          .merge(source:args[:source], weekday:day, meal:meal)
         item[:sha1] = Digest::SHA1.hexdigest item.to_s
         item
       end
