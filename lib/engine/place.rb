@@ -19,7 +19,7 @@ class Place < ActiveRecord::Base
         city:      args[:city],
         name:      args[:name],
         latitude:  args[:latitude],
-        longitude: args[:latitude],
+        longitude: args[:longitude],
         source:    args[:source])
   }
 
