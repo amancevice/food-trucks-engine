@@ -32,6 +32,7 @@ module Engine
         latitude:  args[:latitude],
         longitude: args[:longitude],
         source:    args[:source],
+        timezone:  args[:timezone],
         dist:      args[:dist])
       truck = Truck.match(
         city:   args[:city],
@@ -43,7 +44,7 @@ module Engine
         truck.send send
       end
       day = Time.parse(args[:start]).strftime '%A'
-      Meal.between(start:args[:start], stop:args[:stop]).map do |meal|
+      Meal.between(start:args[:start], stop:args[:stop], timezone:args[:timezone]).map do |meal|
         item = args.merge(truck.to_h)
           .merge(place.to_h)
           .merge(source:args[:source], weekday:day, meal:meal)

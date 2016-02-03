@@ -12,6 +12,7 @@ module Engine
         t.string :number
         t.string :source
         t.string :street
+        t.string :timezone
         t.string :type
       end
 

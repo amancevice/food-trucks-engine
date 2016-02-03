@@ -20,7 +20,8 @@ class Place < ActiveRecord::Base
         name:      args[:name],
         latitude:  args[:latitude],
         longitude: args[:longitude],
-        source:    args[:source])
+        source:    args[:source],
+        timezone:  args[:timezone])
   }
 
   def geocache
