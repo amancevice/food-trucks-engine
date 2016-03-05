@@ -78,14 +78,13 @@ class CityOfBoston < HTMLSource
         stop  = (datetime + 25.hours).utc
       end
 
-      { id:        nil,
-        type:      self.class.to_s,
-        city:      @city,
+      { city:      @city,
         endpoint:  @endpoint.to_s,
         latitude:  nil,
         longitude: nil,
         place:     place,
         site:      site,
+        source:    self.class.to_s,
         start:     start.to_s,
         stop:      stop.to_s,
         timezone:  @timezone,

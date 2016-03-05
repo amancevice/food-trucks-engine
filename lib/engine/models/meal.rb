@@ -12,8 +12,8 @@ module Meal
 
     breakfast  = (5...11).to_a
     lunch      = (11...16).to_a
-    dinner     = (16...20).to_a
-    late_night = [(20...24), (0...5)].map(&:to_a).flatten
+    dinner     = (16...21).to_a
+    late_night = [(21...24), (0...5)].map(&:to_a).flatten
 
     meals = []
     meals << BREAKFAST  if (breakfast & hours).any?

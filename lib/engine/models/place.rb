@@ -1,4 +1,5 @@
 class Place < ActiveRecord::Base
+  @@matchcache = {}
   include Like
 
   has_many :patterns, class_name:"PlacePattern"
@@ -14,11 +15,14 @@ class Place < ActiveRecord::Base
   scope :like, -> n { where id:select{|x| x =~ n }.collect(&:id) }
   scope :nearby, -> args { where id:select{|x| x.nearby? args }.collect(&:id) }
   scope :match, -> args {
-    places = args[:city].nil? ? Place.all : Place.where(city:args[:city])
-    places.like(args[:place]).first ||
-      places.nearby(lat:args[:latitude], lng:args[:longitude], max:args[:dist]||0.05).first ||
-      places.near("#{args[:place]} #{args[:city]}".strip, args[:dist]||0.05, units: :km).first ||
-      Unknown.new(args.slice(:city, :place, :latitude, :longitude, :source, :timezone))
+    @@matchcache[args] ||= begin
+      places = args[:city].nil? ? Place.all : Place.where(city:args[:city])
+      places.like(args[:place]).first ||
+        places.nearby(lat:args[:latitude], lng:args[:longitude], max:args[:dist]||0.05).first ||
+        places.near("#{args[:place]} #{args[:city]}".strip, args[:dist]||0.05, units: :km).first
+    end
+    keys = :city, :place, :latitude, :longitude, :source, :timezone
+    @@matchcache[args] ||= Unknown.new(args.slice(*keys))
   }
 
   def name
