@@ -1,8 +1,24 @@
 module Meal
-  BREAKFAST  = "Breakfast"
-  LUNCH      = "Lunch"
-  DINNER     = "Dinner"
-  LATE_NIGHT = "Late Night"
+  class MealEnum < String
+    attr_reader :hours
+    def initialize str, hours
+      super str
+      @hours = hours
+    end
+  end
+
+  BREAKFAST  = Meal::MealEnum.new "Breakfast",  (5...11).to_a
+  LUNCH      = Meal::MealEnum.new "Lunch",      (11...16).to_a
+  DINNER     = Meal::MealEnum.new "Dinner",     (16...21).to_a
+  LATE_NIGHT = Meal::MealEnum.new "Late Night", [(21...24), (0...5)].map(&:to_a).flatten
+
+  def self.all
+    [BREAKFAST, LUNCH, DINNER, LATE_NIGHT]
+  end
+
+  def self.parse weekday
+    Meal.all.select{|x| x == weekday }.first
+  end
 
   def self.between args
     start = Time.parse(args[:start]).in_time_zone args[:timezone]

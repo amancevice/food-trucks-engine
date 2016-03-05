@@ -63,20 +63,11 @@ class CityOfBoston < HTMLSource
       date = Chronic.parse(dow_node.text).to_date
       datetime = date.in_time_zone @timezone
 
-      case tod_node.text
-      when 'Breakfast'
-        start = (datetime + 5.hours ).utc
-        stop  = (datetime + 11.hours).utc
-      when 'Lunch'
-        start = (datetime + 11.hours).utc
-        stop  = (datetime + 16.hours).utc
-      when 'Dinner'
-        start = (datetime + 16.hours).utc
-        stop  = (datetime + 20.hours).utc
-      when 'Late Night'
-        start = (datetime + 20.hours).utc
-        stop  = (datetime + 25.hours).utc
-      end
+      meal  = Meal.parse tod_node.text
+      delta = [meal.hours.first, meal.hours.last]
+      delta[-1] += 23 if delta.last < delta.first
+      start = (datetime + delta.first.hours).utc
+      stop  = (datetime + delta.last.hours).utc
 
       { city:      @city,
         endpoint:  @endpoint.to_s,
