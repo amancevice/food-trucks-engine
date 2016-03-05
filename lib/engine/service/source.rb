@@ -1,4 +1,6 @@
-class Source
+class HTTPSource
+  attr_reader :city, :endpoint, :timezone
+
   def initialize args
     @city     = args[:city]
     @endpoint = URI.parse args[:endpoint]
@@ -10,13 +12,13 @@ class Source
   end
 end
 
-class JSONSource < Source
+class JSONSource < HTTPSource
   def response
     JSON.parse super
   end
 end
 
-class HTMLSource < Source
+class HTMLSource < HTTPSource
   def response
     Oga.parse_html super
   end
@@ -76,13 +78,14 @@ class CityOfBoston < HTMLSource
         stop  = (datetime + 25.hours).utc
       end
 
-      { city:      @city,
+      { id:        nil,
+        type:      self.class.to_s,
+        city:      @city,
         endpoint:  @endpoint.to_s,
         latitude:  nil,
         longitude: nil,
         place:     place,
         site:      site,
-        source:    self.class.to_s,
         start:     start.to_s,
         stop:      stop.to_s,
         timezone:  @timezone,

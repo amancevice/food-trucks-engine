@@ -1,15 +1,19 @@
 class Pattern < ActiveRecord::Base
-  validates :value, uniqueness: {scope: :place_id}
-
   def =~ name
-    Regexp.new(value) =~ name
+    name =~ exp
+  end
+
+  def exp
+    Regexp.new value
   end
 end
 
 class PlacePattern < Pattern
   belongs_to :pattern
+  validates :value, uniqueness: {scope: :place_id}
 end
 
 class TruckPattern < Pattern
   belongs_to :truck
+  validates :value, uniqueness: {scope: :truck_id}
 end

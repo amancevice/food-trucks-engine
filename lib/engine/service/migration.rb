@@ -7,7 +7,8 @@ module Engine
         t.string :city
         t.string :cross
         t.string :main
-        t.string :name
+        t.string :place
+        t.string :geoname
         t.string :neighborhood
         t.string :number
         t.string :source
@@ -20,7 +21,7 @@ module Engine
 
       create_table :trucks do |t|
         t.string :city
-        t.string :name
+        t.string :truck
         t.string :site
         t.string :source
       end

@@ -33,5 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "geocoder",             "~> 1.2"
   spec.add_runtime_dependency "oga",                  "~> 2.0"
   spec.add_runtime_dependency "sinatra",              "~> 1.4"
+  spec.add_runtime_dependency "sinatra-contrib",      "~> 1.4"
   spec.add_runtime_dependency "sinatra-activerecord", "~> 2.0"
 end
