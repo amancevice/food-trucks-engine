@@ -24,8 +24,8 @@ module Engine
         :city, :endpoint, :id, :latitude, :longitude, :meal, :neighborhood,
         :place, :site, :source, :start, :stop, :timezone, :truck, :weekday]
       items = Meal.between(args.slice(:start, :stop, :timezone)).map do |meal|
-        item = args.merge(truck.attributes.symbolize_keys)
-          .merge(place.attributes.symbolize_keys)
+        item = args.merge(truck.attributes.symbolize_keys.reject{|k,v| v.nil? })
+          .merge(place.attributes.symbolize_keys.reject{|k,v| v.nil? })
           .merge(source:args[:source], weekday:day, meal:meal)
         item.merge id:Digest::SHA1.hexdigest(item.to_s), type:"Gig"
       end.map{|x| x.slice(*keys) }
