@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'engine/version'
+require 'eater_atlas/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "engine"
-  spec.version       = Engine::VERSION
+  spec.name          = "eater_atlas"
+  spec.version       = EaterAtlas::VERSION
   spec.authors       = ["Alexander Mancevice"]
   spec.email         = ["amancevice@cargometrics.com"]
 

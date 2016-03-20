@@ -1,4 +1,4 @@
-module Engine
+module EaterAtlas
   class Server < Sinatra::Base
     configure do
       set :firebase, ENV['FIREBASE_HOME']
@@ -16,7 +16,7 @@ module Engine
       params.symbolize_keys!
 
       json begin
-        { meta:params, data:Engine::Helper.source(params) }
+        { meta:params, data:EaterAtlas::Helper.source(params) }
       rescue NameError => e
         { meta:params, errors:[e.message] }
       rescue SocketError => e
@@ -28,7 +28,7 @@ module Engine
       content_type :json
       params.symbolize_keys!
 
-      json meta:params, data:Engine::Helper.send(helper.to_sym, params)
+      json meta:params, data:EaterAtlas::Helper.send(helper.to_sym, params)
     end
 
     post '/' do
@@ -53,7 +53,7 @@ module Engine
     private
 
     def firebase
-      @ref ||= Engine::Helper.firebase(
+      @ref ||= EaterAtlas::Helper.firebase(
         firebase: settings.firebase,
         secret:   settings.secret,
         user:     settings.user)

@@ -1,0 +1,23 @@
+require "chronic"
+require "geocoder"
+require "geocoder/railtie"
+require "json"
+require "json"
+require "oga"
+require "sinatra"
+require "sinatra/activerecord"
+require "sinatra/json"
+
+Geocoder::Railtie.insert
+
+require "eater_atlas/models/like"
+require "eater_atlas/models/meal"
+require "eater_atlas/models/pattern"
+require "eater_atlas/models/place"
+require "eater_atlas/models/truck"
+require "eater_atlas/service/client"
+require "eater_atlas/service/helper"
+require "eater_atlas/service/migration"
+require "eater_atlas/service/server"
+require "eater_atlas/service/source"
+require "eater_atlas/version"

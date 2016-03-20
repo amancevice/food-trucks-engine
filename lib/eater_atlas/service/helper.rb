@@ -1,4 +1,4 @@
-module Engine
+module EaterAtlas
   module Helper
     def self.source args
       args[:class]&.constantize&.new(args.slice(:city, :timezone, :endpoint)).response

@@ -1,4 +1,4 @@
-module Engine
+module EaterAtlas
   class Client
     attr_reader :host, :port
 
