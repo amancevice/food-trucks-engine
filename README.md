@@ -1,4 +1,4 @@
-# Food Trucks Engine
+# EaterAtlas Engine
 
 ActiveRecord engine for food Trucks location data.
 
