@@ -61,6 +61,7 @@ class CityOfBoston < HTMLSource
 
       # Get start/stop
       date = Chronic.parse(dow_node.text).to_date
+      date -= 7.days if date == Date.today + 7.days
       datetime = date.in_time_zone @timezone
 
       meal  = Meal.parse tod_node.text
