@@ -28,6 +28,10 @@ class StreetFood < JSONSource
   def response
     super['vendors'].map do |key, row|
       row['open'].map do |opening|
+        start  = Time.at(opening['start']).utc
+        stop   = Time.at(opening['end']).utc
+        start -= 7.days if start == Date.today + 7.days
+        stop  -= 7.days if stop  == Date.today + 7.days
         opening.update(
           city:      @city,
           endpoint:  @endpoint.to_s,
@@ -36,8 +40,8 @@ class StreetFood < JSONSource
           place:     opening['display'],
           site:      row['url'],
           source:    self.class.to_s,
-          start:     Time.at(opening['start']).utc.to_s,
-          stop:      Time.at(opening['end']).utc.to_s,
+          start:     start.to_s,
+          stop:      stop.to_s,
           timezone:  @timezone,
           truck:     row['name'])
         .select{|k,v| k.is_a? Symbol }
