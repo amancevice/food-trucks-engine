@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    engine (0.0.4)
+    eater_atlas (0.1.1)
       chronic (~> 0.10)
       geocoder (~> 1.2)
       oga (~> 2.0)
@@ -72,7 +72,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.11)
-  engine!
+  eater_atlas!
   rake (~> 10.0)
 
 BUNDLED WITH
