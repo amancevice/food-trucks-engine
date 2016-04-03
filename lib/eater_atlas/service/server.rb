@@ -11,6 +11,10 @@ module EaterAtlas
       json firebase.val
     end
 
+    get '/privacy' do
+      "EaterAtlas does not share any information about its users with outside parties."
+    end
+
     get '/source' do
       content_type :json
       params.symbolize_keys!

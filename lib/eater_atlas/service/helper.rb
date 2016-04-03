@@ -40,6 +40,15 @@ module EaterAtlas
       truck.save
     end
 
+    def self.firedata gigs
+      # Format data for Firebase
+      gigs.map do |gig|
+        { gig[:weekday] =>
+          { gig[:meal] =>
+            { gig[:id] => gig.except(:id, :geoname, :type) }}}
+      end.reduce &:deep_merge
+    end
+
     def self.firebase args
       gen = Firebase::FirebaseTokenGenerator.new args[:secret]
       tkn = gen.create_token args.slice(:user)
