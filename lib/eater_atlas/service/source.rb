@@ -100,7 +100,7 @@ class RoseKennedyGreenway < HTMLSource
           if Date.today.wday == day.to_i
             date = Date.today
           else
-            date = Chronic.parse("Next #{Date::DAYNAMES[day.to_i]}")
+            date = Chronic.parse("Next #{Date::DAYNAMES[day.to_i]} Midnight").in_time_zone @timezone
           end
           datetime = date.in_time_zone @timezone
 
