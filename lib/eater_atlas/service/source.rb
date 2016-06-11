@@ -85,7 +85,7 @@ class CityOfBoston < HTMLSource
         stop:      stop.to_s,
         timezone:  @timezone,
         truck:     truck } unless stop <= Time.now.utc
-    end
+    end.compact
   end
 end
 
