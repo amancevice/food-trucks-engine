@@ -23,7 +23,7 @@ module EaterAtlas
       keys  = [
         :city, :endpoint, :id, :latitude, :longitude, :meal, :neighborhood,
         :place, :site, :source, :start, :stop, :timezone, :truck, :weekday]
-      items = Meal.between(args.slice(:start, :stop, :timezone)).map do |meal|
+      Meal.between(args.slice(:start, :stop, :timezone)).map do |meal|
         item = args.merge(truck.attributes.symbolize_keys.reject{|k,v| v.nil? })
           .merge(place.attributes.symbolize_keys.reject{|k,v| v.nil? })
           .merge(source:args[:source], weekday:day, meal:meal)
@@ -46,7 +46,7 @@ module EaterAtlas
         { gig[:weekday] =>
           { gig[:meal] =>
             { gig[:id] => gig.except(:id, :geoname, :type) }}}
-      end.reduce &:deep_merge
+      end.reduce(&:deep_merge)
     end
 
     def self.firebase args

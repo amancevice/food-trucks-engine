@@ -14,7 +14,7 @@ module EaterAtlas
 
       json = JSON.parse(response.body).symbolize_keys
       json[:meta].symbolize_keys!
-      json[:data].map &:symbolize_keys!
+      json[:data].map(&:symbolize_keys!)
 
       json
     end
@@ -26,14 +26,13 @@ module EaterAtlas
     end
 
     def post payload:nil
-      http    = Net::HTTP.new @host, @port
       request = Net::HTTP::Post.new "/"
       request.set_form_data payload:payload&.to_json
       response = Net::HTTP.start(@host, @port){|http| http.request request }
 
       json = JSON.parse(response.body).symbolize_keys
       json[:meta].symbolize_keys!
-      json[:data].map &:symbolize_keys!
+      json[:data].map(&:symbolize_keys!)
 
       json
     end

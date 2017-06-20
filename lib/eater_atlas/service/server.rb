@@ -46,7 +46,7 @@ module EaterAtlas
         JSON.parse(params[:payload]).map do |x|
           x.symbolize_keys!
           { x[:id] => x.slice(*keys) }
-        end.reduce &:merge
+        end.reduce(&:merge)
       end
 
       firebase.set payload

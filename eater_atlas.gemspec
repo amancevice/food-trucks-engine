@@ -26,13 +26,13 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler", "~> 1.11"
-  spec.add_development_dependency "rake",    "~> 10.0"
+  spec.add_development_dependency "bundler", "~> 1.15"
+  spec.add_development_dependency "rake",    "~> 12.0"
 
   spec.add_runtime_dependency "chronic",              "~> 0.10"
-  spec.add_runtime_dependency "geocoder",             "~> 1.2"
-  spec.add_runtime_dependency "oga",                  "~> 2.0"
-  spec.add_runtime_dependency "sinatra",              "~> 1.4"
-  spec.add_runtime_dependency "sinatra-contrib",      "~> 1.4"
+  spec.add_runtime_dependency "geocoder",             "~> 1.4"
+  spec.add_runtime_dependency "oga",                  "~> 2.10"
+  spec.add_runtime_dependency "sinatra",              "~> 2.0"
+  spec.add_runtime_dependency "sinatra-contrib",      "~> 2.0"
   spec.add_runtime_dependency "sinatra-activerecord", "~> 2.0"
 end

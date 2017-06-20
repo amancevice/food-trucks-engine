@@ -1,5 +1,5 @@
 module EaterAtlas
-  class Migration < ActiveRecord::Migration
+  class Migration < ActiveRecord::Migration[5.1]
     def change
       create_table :places do |t|
         t.float  :latitude
