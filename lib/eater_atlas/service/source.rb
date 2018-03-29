@@ -52,6 +52,8 @@ end
 
 class CityOfBoston < HTMLSource
   def response
+    super.xpath("//div[@class=department-components]").map do |row|
+    end
     super.xpath("//tr[@class='trFoodTrucks']").map do |row|
       a_node     = row.xpath(".//td[@class='com']/a").first
       dow_node   = row.xpath(".//td[@class='dow']").first

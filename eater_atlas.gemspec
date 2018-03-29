@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "chronic",              "~> 0.10"
   spec.add_runtime_dependency "geocoder",             "~> 1.4"
   spec.add_runtime_dependency "oga",                  "~> 2.10"
-  spec.add_runtime_dependency "sinatra",              "~> 2.0"
+  spec.add_runtime_dependency "sinatra",              "~> 2.0.1"
   spec.add_runtime_dependency "sinatra-contrib",      "~> 2.0"
   spec.add_runtime_dependency "sinatra-activerecord", "~> 2.0"
 end
